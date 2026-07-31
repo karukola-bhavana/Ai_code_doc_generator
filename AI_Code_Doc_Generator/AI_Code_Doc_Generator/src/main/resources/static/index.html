@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Code Documentation Generator</title>
+    <meta name="description" content="Automated AI-powered documentation generator for Java repositories using Spring Boot, JavaParser AST, and Gemini AI.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome & Marked JS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Background Glow Effects -->
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+    <div class="glow-bg glow-3"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                <div class="logo-text">
+                    <span class="logo-title">AIDoc</span>
+                    <span class="logo-subtitle">Code Documentation Generator</span>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-java"><i class="fa-brands fa-java"></i> Java AST</span>
+                <span class="badge badge-spring"><i class="fa-solid fa-leaf"></i> Spring Boot</span>
+                <span class="badge badge-gemini"><i class="fa-solid fa-robot"></i> Gemini AI</span>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">Generate Production-Grade Documentation in Seconds</h1>
+            <p class="hero-desc">Paste any GitHub repository URL. Our Spring Boot backend runs JavaParser AST code analysis and leverages Gemini AI to generate README.md, API Docs, Architecture overview, and code comments.</p>
+
+            <!-- URL Input Bar -->
+            <div class="input-card glass-panel">
+                <div class="input-wrapper">
+                    <i class="fa-brands fa-github github-icon"></i>
+                    <input type="text" id="repoUrlInput" placeholder="https://github.com/owner/repository" value="https://github.com/octocat/Hello-World">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <span id="btnText"><i class="fa-solid fa-bolt"></i> Generate Documentation</span>
+                        <div id="btnSpinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+                <div class="options-group">
+                    <span class="options-label"><i class="fa-solid fa-sliders"></i> Generate Options:</span>
+                    <label class="checkbox-label"><input type="checkbox" id="optReadme" checked> README.md</label>
+                    <label class="checkbox-label"><input type="checkbox" id="optApi" checked> API Documentation</label>
+                    <label class="checkbox-label"><input type="checkbox" id="optArch" checked> Architecture Overview</label>
+                    <label class="checkbox-label"><input type="checkbox" id="optComments" checked> Code Comments</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Execution Flow (Reflecting User Flowchart) -->
+        <section class="pipeline-section glass-panel">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-diagram-project"></i> Processing Architecture Pipeline</h3>
+                <span class="status-indicator" id="pipelineStatus">Idle</span>
+            </div>
+            <div class="flow-steps">
+                <div class="step-card" id="step-url">
+                    <div class="step-icon"><i class="fa-solid fa-link"></i></div>
+                    <div class="step-info">
+                        <h4>1. GitHub URL</h4>
+                        <p>User Repo Input</p>
+                    </div>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                <div class="step-card" id="step-backend">
+                    <div class="step-icon"><i class="fa-solid fa-server"></i></div>
+                    <div class="step-info">
+                        <h4>2. Spring Boot</h4>
+                        <p>Backend Controller</p>
+                    </div>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                <div class="step-card" id="step-github">
+                    <div class="step-icon"><i class="fa-brands fa-github"></i></div>
+                    <div class="step-info">
+                        <h4>3. GitHub Service</h4>
+                        <p>Fetch Repo Info</p>
+                    </div>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                <div class="step-card" id="step-parser">
+                    <div class="step-icon"><i class="fa-solid fa-code"></i></div>
+                    <div class="step-info">
+                        <h4>4. JavaParser</h4>
+                        <p>AST Code Analysis</p>
+                    </div>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-angle-right"></i></div>
+                <div class="step-card" id="step-gemini">
+                    <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="step-info">
+                        <h4>5. Gemini AI</h4>
+                        <p>Doc Synthesis</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Repository & Analysis Summary -->
+        <div id="repoSummarySection" class="summary-grid hidden">
+            <div class="glass-card repo-card">
+                <h4><i class="fa-solid fa-folder-open"></i> Repository Overview</h4>
+                <div class="repo-meta-grid">
+                    <div class="meta-item"><span class="meta-label">Name:</span> <span id="metaName" class="meta-val">-</span></div>
+                    <div class="meta-item"><span class="meta-label">Owner:</span> <span id="metaOwner" class="meta-val">-</span></div>
+                    <div class="meta-item"><span class="meta-label">Language:</span> <span id="metaLang" class="meta-val">-</span></div>
+                    <div class="meta-item"><span class="meta-label">Stars:</span> <span id="metaStars" class="meta-val">-</span></div>
+                    <div class="meta-item"><span class="meta-label">Forks:</span> <span id="metaForks" class="meta-val">-</span></div>
+                </div>
+                <p id="metaDesc" class="repo-desc">-</p>
+            </div>
+
+            <div class="glass-card analysis-card">
+                <h4><i class="fa-solid fa-microchip"></i> AST Code Analysis Stats</h4>
+                <div class="stats-row">
+                    <div class="stat-pill"><span class="stat-num" id="statFiles">0</span> <span class="stat-lbl">Files</span></div>
+                    <div class="stat-pill"><span class="stat-num" id="statClasses">0</span> <span class="stat-lbl">Classes</span></div>
+                    <div class="stat-pill"><span class="stat-num" id="statEndpoints">0</span> <span class="stat-lbl">Endpoints</span></div>
+                </div>
+                <div class="tech-stack" id="techStackTags">
+                    <span class="tag">Java</span>
+                    <span class="tag">Spring Boot</span>
+                    <span class="tag">Maven</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Viewer & Editor -->
+        <section id="docViewerSection" class="doc-viewer-section glass-panel hidden">
+            <div class="viewer-header">
+                <!-- Navigation Tabs -->
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="readmeTab"><i class="fa-regular fa-file-lines"></i> README.md</button>
+                    <button class="tab-btn" data-tab="apiTab"><i class="fa-solid fa-cubes"></i> API Docs</button>
+                    <button class="tab-btn" data-tab="archTab"><i class="fa-solid fa-network-wired"></i> Architecture</button>
+                    <button class="tab-btn" data-tab="commentsTab"><i class="fa-solid fa-comments"></i> Code Comments</button>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="action-controls">
+                    <button class="btn btn-secondary btn-sm" id="toggleViewBtn"><i class="fa-solid fa-code"></i> Toggle Raw / Preview</button>
+                    <button class="btn btn-secondary btn-sm" id="copyBtn"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button class="btn btn-success btn-sm" id="downloadBtn"><i class="fa-solid fa-download"></i> Download README.md</button>
+                </div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="tab-content-wrapper">
+                <div id="readmeTab" class="tab-page active">
+                    <div class="md-preview markdown-body" id="readmePreview"></div>
+                    <textarea class="md-editor hidden" id="readmeEditor" spellcheck="false"></textarea>
+                </div>
+
+                <div id="apiTab" class="tab-page">
+                    <div class="md-preview markdown-body" id="apiPreview"></div>
+                    <textarea class="md-editor hidden" id="apiEditor" spellcheck="false"></textarea>
+                </div>
+
+                <div id="archTab" class="tab-page">
+                    <div class="md-preview markdown-body" id="archPreview"></div>
+                    <textarea class="md-editor hidden" id="archEditor" spellcheck="false"></textarea>
+                </div>
+
+                <div id="commentsTab" class="tab-page">
+                    <div class="md-preview markdown-body" id="commentsPreview"></div>
+                    <textarea class="md-editor hidden" id="commentsEditor" spellcheck="false"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>AI Code Documentation Generator &bull; Powered by Spring Boot, JavaParser AST &amp; Gemini AI</p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
